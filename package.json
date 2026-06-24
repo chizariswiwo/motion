@@ -1,0 +1,23 @@
+{
+  "name": "motion",
+  "version": "1.0.0",
+  "description": "A Remotion video project demonstrating the remotion skill",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render HelloWorld out/HelloWorld.mp4",
+    "still": "remotion still HelloWorld out/HelloWorld.png --frame=45",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.482",
+    "@remotion/transitions": "4.0.482",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.482"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "typescript": "5.8.3"
+  }
+}
