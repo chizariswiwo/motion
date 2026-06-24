@@ -1,57 +1,62 @@
 import React from 'react';
-import {AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {colors} from './theme';
-import {PhoneFrame} from './PhoneFrame';
-import {SplashScreen} from './screens/SplashScreen';
-import {MenuScreen} from './screens/MenuScreen';
-import {HomeScreen} from './screens/HomeScreen';
-import {DashboardScreen} from './screens/DashboardScreen';
+import centre from './assets/centre.png';
+import gauche1 from './assets/gauche1.png';
+import gauche2 from './assets/gauche2.png';
+import droite1 from './assets/droite1.png';
+import droite2 from './assets/droite2.png';
+
+// Global scale applied to the native pixel sizes of the phone cut-outs.
+const S = 0.7;
 
 type PhoneDef = {
-	screen: React.ReactNode;
-	island: boolean;
-	x: number; // final x offset
-	y: number; // final y offset
-	scale: number; // final scale
-	rotY: number; // starting 3D Y rotation (settles to 0)
+	src: string;
+	w: number; // native width
+	h: number; // native height
+	x: number; // final x offset (centre-based)
+	y: number; // final y offset from canvas centre
 	z: number;
 	delay: number; // entrance start frame
 	phase: number; // idle-float phase
 };
 
-// Reveal order: center first, then left, then right, then the two orange
-// logo screens last.
+// Reveal order via delay: centre, then the two inner screens, then the two
+// outer logo screens. Each entry keeps its native aspect (perspective is
+// already baked into the image).
 const PHONES: PhoneDef[] = [
-	{screen: <HomeScreen />, island: true, x: 0, y: -9, scale: 1.13, rotY: 0, z: 10, delay: 8, phase: 2.4},
-	{screen: <MenuScreen />, island: false, x: -364, y: 28, scale: 1.02, rotY: 20, z: 8, delay: 40, phase: 1.3},
-	{screen: <DashboardScreen />, island: true, x: 364, y: 28, scale: 1.02, rotY: -20, z: 8, delay: 58, phase: 3.5},
-	{screen: <SplashScreen />, island: false, x: -703, y: 80, scale: 0.93, rotY: 26, z: 6, delay: 92, phase: 0.0},
-	{screen: <SplashScreen />, island: true, x: 703, y: 80, scale: 0.93, rotY: -26, z: 6, delay: 106, phase: 4.6},
+	{src: centre, w: 728, h: 1471, x: 0, y: -3, z: 10, delay: 6, phase: 2.4},
+	{src: gauche1, w: 589, h: 1308, x: -330, y: 54, z: 8, delay: 34, phase: 1.3},
+	{src: droite1, w: 590, h: 1308, x: 330, y: 54, z: 8, delay: 50, phase: 3.5},
+	{src: gauche2, w: 445, h: 1178, x: -620, y: 100, z: 6, delay: 82, phase: 0.0},
+	{src: droite2, w: 445, h: 1178, x: 620, y: 100, z: 6, delay: 96, phase: 4.6},
 ];
 
 const Phone: React.FC<{def: PhoneDef}> = ({def}) => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 
+	const dispW = def.w * S;
+	const dispH = def.h * S;
+
 	// Smooth, professional entrance — no bounce.
 	const enter = spring({
 		fps,
 		frame: frame - def.delay,
 		config: {damping: 200},
-		durationInFrames: 38,
+		durationInFrames: 36,
 	});
 
-	// Phones slide outward from behind the center as they appear.
-	const x = def.x * (0.42 + 0.58 * enter);
-	const rise = (1 - enter) * 78;
-	const scale = def.scale * (0.84 + 0.16 * enter);
-	const rotY = def.rotY * (1 - enter);
-	const blur = (1 - enter) * 7;
+	// Slide outward from behind the centre as they appear.
+	const x = def.x * (0.45 + 0.55 * enter);
+	const rise = (1 - enter) * 80;
+	const scale = 0.86 + 0.14 * enter;
+	const blur = (1 - enter) * 6;
 	const opacity = interpolate(enter, [0, 1], [0, 1], {extrapolateRight: 'clamp'});
 
-	// Idle float, eased in by the entrance so it never fights the reveal.
-	const bob = Math.sin(frame / 26 + def.phase) * 5 * enter;
-	const sway = Math.sin(frame / 34 + def.phase) * 0.35 * enter;
+	// Idle float, eased in by the entrance.
+	const bob = Math.sin(frame / 27 + def.phase) * 5 * enter;
+	const sway = Math.sin(frame / 36 + def.phase) * 0.3 * enter;
 
 	return (
 		<div
@@ -63,29 +68,28 @@ const Phone: React.FC<{def: PhoneDef}> = ({def}) => {
 				transform: `translate(-50%, -50%) translate(${x}px, ${def.y + rise + bob}px)`,
 			}}
 		>
-			{/* ground shadow (stays flat, not rotated) */}
+			{/* soft ground shadow */}
 			<div
 				style={{
 					position: 'absolute',
 					left: '50%',
-					bottom: -48,
+					bottom: -34,
 					transform: 'translateX(-50%)',
-					width: 330 * def.scale,
-					height: 48,
-					background: 'radial-gradient(ellipse at center, rgba(20,30,60,0.28), rgba(20,30,60,0) 70%)',
-					filter: 'blur(7px)',
+					width: dispW * 0.82,
+					height: 42,
+					background: 'radial-gradient(ellipse at center, rgba(20,30,60,0.26), rgba(20,30,60,0) 70%)',
+					filter: 'blur(8px)',
 					opacity: enter * 0.9,
 				}}
 			/>
-			{/* 3D-rotated phone */}
 			<div
 				style={{
-					transform: `perspective(2200px) rotateY(${rotY}deg) rotateZ(${sway}deg) scale(${scale})`,
+					transform: `rotate(${sway}deg) scale(${scale})`,
 					filter: blur > 0.05 ? `blur(${blur}px)` : 'none',
 					opacity,
 				}}
 			>
-				<PhoneFrame island={def.island}>{def.screen}</PhoneFrame>
+				<Img src={def.src} style={{width: dispW, height: dispH, display: 'block'}} />
 			</div>
 		</div>
 	);
@@ -96,20 +100,16 @@ export const MashopPromo: React.FC = () => {
 	const {durationInFrames} = useVideoConfig();
 
 	// Slow cinematic push-in across the whole shot.
-	const groupScale = interpolate(frame, [0, durationInFrames], [1.0, 1.04], {
-		extrapolateRight: 'clamp',
-	});
+	const groupScale = interpolate(frame, [0, durationInFrames], [1.0, 1.04], {extrapolateRight: 'clamp'});
 
 	// One light sweep after the deck has assembled.
-	const sweepX = interpolate(frame, [150, 220], [-40, 150], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-	const sweepOpacity = interpolate(frame, [150, 185, 220], [0, 0.12, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+	const sweepX = interpolate(frame, [140, 205], [-40, 150], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+	const sweepOpacity = interpolate(frame, [140, 172, 205], [0, 0.1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 
 	return (
 		<AbsoluteFill style={{background: colors.pageBg}}>
-			{/* soft backdrop */}
-			<AbsoluteFill style={{background: 'radial-gradient(120% 120% at 50% 38%, #FFFFFF 0%, #F4F5F8 70%, #ECEEF2 100%)'}} />
-			{/* faint brand glow behind the hero */}
-			<AbsoluteFill style={{background: 'radial-gradient(38% 48% at 50% 46%, rgba(244,169,31,0.14), rgba(244,169,31,0) 70%)'}} />
+			<AbsoluteFill style={{background: 'radial-gradient(120% 120% at 50% 40%, #FFFFFF 0%, #F5F6F8 72%, #EDEFF2 100%)'}} />
+			<AbsoluteFill style={{background: 'radial-gradient(36% 46% at 50% 48%, rgba(244,169,31,0.12), rgba(244,169,31,0) 70%)'}} />
 
 			<AbsoluteFill style={{transform: `scale(${groupScale})`}}>
 				{PHONES.map((def, i) => (
@@ -117,14 +117,13 @@ export const MashopPromo: React.FC = () => {
 				))}
 			</AbsoluteFill>
 
-			{/* light sweep */}
 			<AbsoluteFill style={{overflow: 'hidden', pointerEvents: 'none'}}>
 				<div
 					style={{
 						position: 'absolute',
 						top: '-20%',
 						left: `${sweepX}%`,
-						width: '26%',
+						width: '24%',
 						height: '140%',
 						background: 'linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)',
 						transform: 'rotate(8deg)',
