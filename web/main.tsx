@@ -25,6 +25,7 @@ const App: React.FC = () => {
 					compositionWidth={1920}
 					compositionHeight={1080}
 					style={{width: '100%'}}
+					initialFrame={90}
 					controls
 					loop
 					autoPlay
