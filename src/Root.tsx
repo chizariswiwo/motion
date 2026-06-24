@@ -2,10 +2,20 @@ import React from 'react';
 import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
 import {MashopPromo} from './mashop/MashopPromo';
+import {Motion2} from './mashop/Motion2';
 
 export const Root: React.FC = () => {
 	return (
 		<>
+			<Composition
+				id="Motion2"
+				component={Motion2}
+				durationInFrames={600}
+				width={3840}
+				height={2160}
+				fps={60}
+				defaultProps={{}}
+			/>
 			<Composition
 				id="MashopPromo"
 				component={MashopPromo}
