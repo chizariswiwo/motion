@@ -20,12 +20,12 @@ const App: React.FC = () => {
 			>
 				<Player
 					component={MashopPromo}
-					durationInFrames={450}
+					durationInFrames={480}
 					fps={30}
 					compositionWidth={1920}
 					compositionHeight={1080}
 					style={{width: '100%'}}
-					initialFrame={90}
+					initialFrame={170}
 					controls
 					loop
 					autoPlay
