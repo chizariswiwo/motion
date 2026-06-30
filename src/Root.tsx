@@ -11,7 +11,7 @@ export const Root: React.FC = () => {
 			<Composition
 				id="BrowserType"
 				component={BrowserType}
-				durationInFrames={210}
+				durationInFrames={255}
 				width={1920}
 				height={1080}
 				fps={30}

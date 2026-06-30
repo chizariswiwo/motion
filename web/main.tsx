@@ -38,7 +38,7 @@ const App: React.FC = () => {
 
 			<h2 style={{fontSize: 16, margin: '8px 0 4px'}}>Vidéo navigateur — saisie www.jennyparia.com + chargement (16:9 · 7 s)</h2>
 			<div style={{borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.5)', border: '1px solid #21262d'}}>
-				<Player component={BrowserType} durationInFrames={210} fps={30} compositionWidth={1920} compositionHeight={1080} style={{width: '100%'}} controls loop autoPlay />
+				<Player component={BrowserType} durationInFrames={255} fps={30} compositionWidth={1920} compositionHeight={1080} style={{width: '100%'}} controls loop autoPlay />
 			</div>
 			<Download href={url('BrowserType.mp4')} name="jennyparia-navigateur.mp4" />
 
