@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import {Player} from '@remotion/player';
 import {MashopPromo} from '../src/mashop/MashopPromo';
 import {Motion2} from '../src/mashop/Motion2';
+import {BrowserType} from '../src/mashop/BrowserType';
 import logo from '../src/mashop/assets/logo.png';
 
 const url = (name: string) => `${import.meta.env.BASE_URL}${name}`;
@@ -35,7 +36,13 @@ const App: React.FC = () => {
 				<h1 style={{margin: 0}}>aperçus des animations</h1>
 			</div>
 
-			<h2 style={{fontSize: 16, margin: '8px 0 4px'}}>Motion 2 — lancement cinématique (4K · 60fps · 10 s)</h2>
+			<h2 style={{fontSize: 16, margin: '8px 0 4px'}}>Vidéo navigateur — saisie www.jennyparia.com + chargement (16:9 · 7 s)</h2>
+			<div style={{borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.5)', border: '1px solid #21262d'}}>
+				<Player component={BrowserType} durationInFrames={210} fps={30} compositionWidth={1920} compositionHeight={1080} style={{width: '100%'}} controls loop autoPlay />
+			</div>
+			<Download href={url('BrowserType.mp4')} name="jennyparia-navigateur.mp4" />
+
+			<h2 style={{fontSize: 16, margin: '34px 0 4px'}}>Motion 2 — lancement cinématique (4K · 60fps · 10 s)</h2>
 			<p className="sub">Lecteur interactif · rendu vectoriel temps réel</p>
 			<div style={{borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.5)', border: '1px solid #21262d'}}>
 				<Player component={Motion2} durationInFrames={600} fps={60} compositionWidth={3840} compositionHeight={2160} style={{width: '100%'}} initialFrame={30} controls loop autoPlay />

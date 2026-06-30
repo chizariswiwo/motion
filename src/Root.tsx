@@ -3,10 +3,20 @@ import {Composition} from 'remotion';
 import {HelloWorld} from './HelloWorld';
 import {MashopPromo} from './mashop/MashopPromo';
 import {Motion2} from './mashop/Motion2';
+import {BrowserType} from './mashop/BrowserType';
 
 export const Root: React.FC = () => {
 	return (
 		<>
+			<Composition
+				id="BrowserType"
+				component={BrowserType}
+				durationInFrames={210}
+				width={1920}
+				height={1080}
+				fps={30}
+				defaultProps={{}}
+			/>
 			<Composition
 				id="Motion2"
 				component={Motion2}
